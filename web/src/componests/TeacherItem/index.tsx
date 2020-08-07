@@ -2,34 +2,57 @@ import React from 'react';
 
 import whatsappIcon from '../../assets/images/icons/whatsapp.svg';
 
+import api from '../../services/api';
+
 import './styles.css';
 
-function TeacherItem() {
+
+export interface Teacher {
+  id: number;
+  name: string;
+  avatar: string;
+  bio: string;
+  subject: string;
+  cost: number;
+  whatsapp: string;
+}
+
+interface TeacherItemProps {
+  teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({ teacher }) => {
+  async function createNewConnection() {
+    await api.post('connections', {
+      user_id: teacher.id
+    });
+  }
+  
   return (
     <article className="teacher-item">
       <header>
-        <img src="https://avatars2.githubusercontent.com/u/14322937?s=460&u=d4e60a7be3fe6afcb4a688e5327174425842c8f6&v=4" alt="Gustavo Gonzalez"/>
+        <img src={teacher.avatar} alt={teacher.name}/>
         <div>
-          <strong>Gustavo Gonzalez</strong>
-          <span>Python</span>
+          <strong>{teacher.name}</strong>
+          <span>{teacher.subject}</span>
         </div>
       </header>
 
-      <p>
-        Conhecido como PyGuy.
-        <br/><br/>
-        Desenvolve qualquer coisa com python utilizando a melhor metodologia de desenvolvimento do mercado o GoHorse.
-      </p>
+      <p>{teacher.bio}</p>
 
       <footer>
         <p>
           Preço/hora
-          <strong>R$ 100,00</strong>
+          <strong>R$ {teacher.cost}</strong>
         </p>
-        <button type="button">
+        <a
+          target="_blank"
+          onClick={createNewConnection}
+          href={`https://wa.me/${teacher.whatsapp}`}
+        >
           <img src={whatsappIcon} alt="Whatsapp"/>
           Entrar em contato
-        </button>
+        </a>
       </footer>
     </article>
   );
